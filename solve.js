@@ -11,6 +11,7 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
   const signedUpLibrariesIndexes = new Set();
   const signedUpLibraries = [];
   let nbSignedUpLeft = 0;
+  const alreadySentBooks = new Set();
   for (let day = 0; day < ndays; day++) {
     if (isCurrentlySigning) {
       nbSignedUpLeft--;
@@ -41,10 +42,13 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
     }
     for (signedUpLibrary of signedUpLibraries) {
       if (signedUpLibrary.availableBooks.length <= 0) continue;
-      const shippedBooks = signedUpLibrary.availableBooks.splice(
-        0,
-        signedUpLibrary.shipCapacity
-      );
+      const shippedBooks = [];
+      for (book of signedUpLibrary.availableBooks) {
+        if (alreadySentBooks.has(book)) continue;
+        shippedBooks.push(book);
+        alreadySentBooks.add(book);
+        if (shippedBooks.length === signedUpLibrary.shipCapacity) break;
+      }
       signedUpLibrary.books = signedUpLibrary.books.concat(shippedBooks);
       signedUpLibrary.nbSentBooks += shippedBooks.length;
     }
