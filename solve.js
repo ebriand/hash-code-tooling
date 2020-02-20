@@ -6,7 +6,7 @@ const sortLibraries = require("./sortLibraries");
 function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
   libraries = sortLibraries(libraries, ndays, scores);
   let isCurrentlySigning = false;
-  let currentlySigningIndex = null;
+  let currentlySigningLibrary = null;
   const signedUpLibrariesIndexes = new Set();
   const signedUpLibraries = [];
   let nbSignedUpLeft = 0;
@@ -16,24 +16,25 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
       if (nbSignedUpLeft === 0) {
         isCurrentlySigning = false;
         signedUpLibraries.push({
-          libraryIndex: currentlySigningIndex,
+          libraryIndex: currentlySigningLibrary.index,
           nbSentBooks: 0,
           books: [],
-          shipCapacity: libraries[currentlySigningIndex].shipCapacity,
-          availableBooks: libraries[currentlySigningIndex].books
+          shipCapacity: currentlySigningLibrary.shipCapacity,
+          availableBooks: currentlySigningLibrary.books
         });
       }
     }
 
     if (!isCurrentlySigning) {
       for (let index = 0; index < libraries.length; index++) {
-        if (signedUpLibrariesIndexes.has(index)) {
+        const library = libraries[index];
+        if (signedUpLibrariesIndexes.has(library.index)) {
           continue;
         }
         isCurrentlySigning = true;
-        signedUpLibrariesIndexes.add(index);
-        currentlySigningIndex = index;
-        nbSignedUpLeft = libraries[index].signupDuration;
+        signedUpLibrariesIndexes.add(library.index);
+        currentlySigningLibrary = library;
+        nbSignedUpLeft = library.signupDuration;
         break;
       }
     }
