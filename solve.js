@@ -41,7 +41,6 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
       }
     }
     for (signedUpLibrary of signedUpLibraries) {
-      if (signedUpLibrary.availableBooks.length <= 0) continue;
       const shippedBooks = [];
       for (book of signedUpLibrary.availableBooks) {
         if (alreadySentBooks.has(book)) continue;
@@ -54,7 +53,7 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
     }
   }
   debug("finished");
-  return signedUpLibraries;
+  return signedUpLibraries.filter(library => library.nbSentBooks !== 0);
 }
 
 module.exports = solve;
