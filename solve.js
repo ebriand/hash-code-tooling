@@ -5,7 +5,7 @@ const gridUtils = require("./grid-utils");
 function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
   let isCurrentlySigning = false;
   let currentlySigningIndex = null;
-  const signedUpLibrariesIndexes = new Set([]);
+  const signedUpLibrariesIndexes = new Set();
   const signedUpLibraries = [];
   let nbSignedUpLeft = 0;
   for (let day = 0; day < ndays; day++) {
