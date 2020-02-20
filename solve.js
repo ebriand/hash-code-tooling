@@ -2,6 +2,7 @@ const debug = require("debug")("solve");
 const _ = require("lodash");
 const gridUtils = require("./grid-utils");
 const sortLibraries = require("./sortLibraries");
+const sortBooks = require("./sortBooks");
 
 function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
   libraries = sortLibraries(libraries, ndays, scores);
@@ -20,7 +21,7 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
           nbSentBooks: 0,
           books: [],
           shipCapacity: currentlySigningLibrary.shipCapacity,
-          availableBooks: currentlySigningLibrary.books
+          availableBooks: sortBooks(currentlySigningLibrary.books, scores)
         });
       }
     }
