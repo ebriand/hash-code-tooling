@@ -29,6 +29,16 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
     }
 
     if (!isCurrentlySigning) {
+      for (let index = 0; index < libraries.length; index++) {
+        const library = libraries[index];
+        const remainingBooks = [];
+        for (let bookIndex = 0; bookIndex < library.books.length; bookIndex++) {
+          if (!alreadySentBooks.has(library.books[bookIndex])) {
+            remainingBooks.push(library.books[bookIndex]);
+          }
+        }
+        library.books = remainingBooks;
+      }
       const sortedLibraries = sortLibraries(libraries, ndays, scores);
       for (let index = 0; index < sortedLibraries.length; index++) {
         const library = sortedLibraries[index];
