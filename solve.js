@@ -5,7 +5,6 @@ const sortLibraries = require("./sortLibraries");
 const sortBooks = require("./sortBooks");
 
 function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
-  libraries = sortLibraries(libraries, ndays, scores);
   let isCurrentlySigning = false;
   let currentlySigningLibrary = null;
   const signedUpLibrariesIndexes = new Set();
@@ -30,8 +29,9 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
     }
 
     if (!isCurrentlySigning) {
-      for (let index = 0; index < libraries.length; index++) {
-        const library = libraries[index];
+      const sortedLibraries = sortLibraries(libraries, ndays, scores);
+      for (let index = 0; index < sortedLibraries.length; index++) {
+        const library = sortedLibraries[index];
         if (signedUpLibrariesIndexes.has(library.index)) {
           continue;
         }
