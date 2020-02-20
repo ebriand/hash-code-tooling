@@ -9,8 +9,6 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
   const signedUpLibraries = [];
   let nbSignedUpLeft = 0;
   for (let day = 0; day < ndays; day++) {
-    debug({ day });
-    debug({ isCurrentlySigning, signedUpLibrariesIndexes });
     if (isCurrentlySigning) {
       nbSignedUpLeft--;
       if (nbSignedUpLeft === 0) {
@@ -26,12 +24,10 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
         });
       }
     } else {
-      debug("signing");
       libraries.forEach((library, index) => {
         if (signedUpLibrariesIndexes.includes(index) || isCurrentlySigning) {
           return;
         }
-        debug({ index });
         isCurrentlySigning = true;
         signedUpLibrariesIndexes.push(index);
         nbSignedUpLeft = library.signupDuration - 1;
@@ -59,7 +55,6 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
   //     books: [0, 1, 2, 3, 4]
   //   }
   // ];
-  debug(signedUpLibraries);
   return signedUpLibraries;
 }
 
