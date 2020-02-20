@@ -39,7 +39,7 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
         }
         library.books = remainingBooks;
       }
-      const sortedLibraries = sortLibraries(libraries, ndays, scores);
+      const sortedLibraries = sortLibraries(libraries, ndays - day, scores);
       for (let index = 0; index < sortedLibraries.length; index++) {
         const library = sortedLibraries[index];
         if (signedUpLibrariesIndexes.has(library.index)) {
