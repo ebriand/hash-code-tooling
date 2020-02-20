@@ -1,32 +1,29 @@
 module.exports = function sortLibraries(libraries, ndays, bookScores) {
   const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
   return libraries.sort(function(a, b) {
+    const aRemainingTime = ndays - a.signupDuration;
+    const aBooks = a.books.slice(aRemainingTime * a.shipCapacity);
     const aScores =
-      a.books.length == 0
+      aBooks.length == 0
         ? 0
-        : a.books
+        : aBooks
             .map(book => {
               return bookScores[book];
             })
             .reduce(reducer);
-    const indexA =
-      a.books.length == 0
-        ? 0
-        : ((ndays - a.signupDuration) * aScores * a.shipCapacity) /
-          a.books.length;
+    const indexA = aScores * a.shipCapacity;
+    const bRemainingTime = ndays - b.signupDuration;
+    const bBooks = b.books.slice(bRemainingTime * b.shipCapacity);
     const bScores =
-      b.books.length == 0
+      bBooks.length == 0
         ? 0
-        : b.books
+        : bBooks
             .map(book => {
               return bookScores[book];
             })
             .reduce(reducer);
-    const indexB =
-      b.books.length == 0
-        ? 0
-        : ((ndays - b.signupDuration) * bScores * b.shipCapacity) /
-          b.books.length;
+    const indexB = bScores * b.shipCapacity;
     return indexB - indexA;
   });
 };
