@@ -3,12 +3,13 @@ const _ = require("lodash");
 const gridUtils = require("./grid-utils");
 
 function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
-  //{"nbooks":6,"nlibraries":2,"ndays":7,"scores":[1,2,3,6,5,4],"libraries":[{"nbooks":5,"signupDuration":2,"shipCapacity":2,"books":[0,1,2,3,4]},{"nbooks":4,"signupDuration":3,"shipCapacity":1,"books":[0,2,3,5]}]}
   let isCurrentlySigning = false;
-  const signedUpLibrariesIndexes = [];
+  let currentlySigningIndex = null;
+  const signedUpLibrariesIndexes = new Set([]);
   const signedUpLibraries = [];
   let nbSignedUpLeft = 0;
   for (let day = 0; day < ndays; day++) {
+    //debug("begin day");
     //debug({ day });
     //debug({ isCurrentlySigning, signedUpLibrariesIndexes });
     if (isCurrentlySigning) {
@@ -16,30 +17,31 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
       //debug({ nbSignedUpLeft });
       if (nbSignedUpLeft === 0) {
         isCurrentlySigning = false;
-        const libraryIndex =
-          signedUpLibrariesIndexes[signedUpLibrariesIndexes.length - 1];
         //debug("finished signing", libraryIndex);
         signedUpLibraries.push({
-          libraryIndex,
+          libraryIndex: currentlySigningIndex,
           nbSentBooks: 0,
           books: [],
-          shipCapacity: libraries[libraryIndex].shipCapacity,
-          availableBooks: libraries[libraryIndex].books
+          shipCapacity: libraries[currentlySigningIndex].shipCapacity,
+          availableBooks: libraries[currentlySigningIndex].books
         });
       }
     }
 
     if (!isCurrentlySigning) {
-      libraries.forEach((library, index) => {
-        if (signedUpLibrariesIndexes.includes(index) || isCurrentlySigning) {
-          return;
+      for (let index = 0; index < libraries.length; index++) {
+        if (signedUpLibrariesIndexes.has(index)) {
+          continue;
         }
         //debug("Signing", index);
         isCurrentlySigning = true;
-        signedUpLibrariesIndexes.push(index);
-        nbSignedUpLeft = library.signupDuration;
-      });
+        signedUpLibrariesIndexes.add(index);
+        currentlySigningIndex = index;
+        nbSignedUpLeft = libraries[index].signupDuration;
+        break;
+      }
     }
+    //debug("send");
     for (signedUpLibrary of signedUpLibraries) {
       if (signedUpLibrary.availableBooks.length <= 0) continue;
       //debug("sending books for library", signedUpLibrary.libraryIndex);
@@ -50,8 +52,10 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
       signedUpLibrary.books = signedUpLibrary.books.concat(shippedBooks);
       signedUpLibrary.nbSentBooks += shippedBooks.length;
     }
+    //debug("end day");
   }
   //debug(signedUpLibraries);
+  debug("finished");
   return signedUpLibraries;
 }
 

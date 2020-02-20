@@ -12,11 +12,13 @@ function writeLines(path, lines) {
 }
 
 const unparse = solution => {
+  debug("writing...");
   const result = [solution.length];
-  solution.forEach(library => {
+  for (let i = 0; i < solution.length; i++) {
+    const library = solution[i];
     result.push([library.libraryIndex + " " + library.nbSentBooks]);
     result.push([library.books.join(" ")]);
-  });
+  }
   return result;
 };
 
