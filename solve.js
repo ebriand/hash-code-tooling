@@ -43,7 +43,7 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
         0,
         signedUpLibrary.shipCapacity
       );
-      signedUpLibrary.books.push(shippedBooks);
+      signedUpLibrary.books = signedUpLibrary.books.concat(shippedBooks);
       signedUpLibrary.nbSentBooks += shippedBooks.length;
     }
   }
@@ -59,7 +59,7 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
   //     books: [0, 1, 2, 3, 4]
   //   }
   // ];
-
+  debug(signedUpLibraries);
   return signedUpLibraries;
 }
 
