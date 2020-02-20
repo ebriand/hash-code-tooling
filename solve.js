@@ -22,7 +22,9 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
           nbSentBooks: 0,
           books: [],
           shipCapacity: currentlySigningLibrary.shipCapacity,
-          availableBooks: sortBooks(currentlySigningLibrary.books, scores)
+          availableBooks: new Set(
+            sortBooks(currentlySigningLibrary.books, scores)
+          )
         });
       }
     }
@@ -41,9 +43,13 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
       }
     }
     for (signedUpLibrary of signedUpLibraries) {
+      if (signedUpLibrary.availableBooks.size == 0) continue;
       const shippedBooks = [];
       for (book of signedUpLibrary.availableBooks) {
-        if (alreadySentBooks.has(book)) continue;
+        if (alreadySentBooks.has(book)) {
+          signedUpLibrary.availableBooks.delete(book);
+          continue;
+        }
         shippedBooks.push(book);
         alreadySentBooks.add(book);
         if (shippedBooks.length === signedUpLibrary.shipCapacity) break;
