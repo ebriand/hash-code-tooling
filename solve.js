@@ -9,12 +9,16 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
   const signedUpLibraries = [];
   let nbSignedUpLeft = 0;
   for (let day = 0; day < ndays; day++) {
+    //debug({ day });
+    //debug({ isCurrentlySigning, signedUpLibrariesIndexes });
     if (isCurrentlySigning) {
       nbSignedUpLeft--;
+      //debug({ nbSignedUpLeft });
       if (nbSignedUpLeft === 0) {
         isCurrentlySigning = false;
         const libraryIndex =
           signedUpLibrariesIndexes[signedUpLibrariesIndexes.length - 1];
+        //debug("finished signing", libraryIndex);
         signedUpLibraries.push({
           libraryIndex,
           nbSentBooks: 0,
@@ -23,18 +27,22 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
           availableBooks: libraries[libraryIndex].books
         });
       }
-    } else {
+    }
+
+    if (!isCurrentlySigning) {
       libraries.forEach((library, index) => {
         if (signedUpLibrariesIndexes.includes(index) || isCurrentlySigning) {
           return;
         }
+        //debug("Signing", index);
         isCurrentlySigning = true;
         signedUpLibrariesIndexes.push(index);
-        nbSignedUpLeft = library.signupDuration - 1;
+        nbSignedUpLeft = library.signupDuration;
       });
     }
     for (signedUpLibrary of signedUpLibraries) {
       if (signedUpLibrary.availableBooks.length <= 0) continue;
+      //debug("sending books for library", signedUpLibrary.libraryIndex);
       const shippedBooks = signedUpLibrary.availableBooks.splice(
         0,
         signedUpLibrary.shipCapacity
@@ -43,18 +51,7 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
       signedUpLibrary.nbSentBooks += shippedBooks.length;
     }
   }
-  // const signedUpLibraries = [
-  //   {
-  //     libraryIndex: 1,
-  //     nbSentBooks: 3,
-  //     books: [5, 2, 3]
-  //   },
-  //   {
-  //     libraryIndex: 0,
-  //     nbSentBooks: 5,
-  //     books: [0, 1, 2, 3, 4]
-  //   }
-  // ];
+  //debug(signedUpLibraries);
   return signedUpLibraries;
 }
 
