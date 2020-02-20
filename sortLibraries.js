@@ -1,4 +1,5 @@
-function sortLibraries(libraries, ndays, bookScores) {
+module.exports = function sortLibraries(libraries, ndays, bookScores) {
+  const reducer = (accumulator, currentValue) => accumulator + currentValue;
   return libraries.sort(function(a, b) {
     const aScores = a.books
       .map(book => {
@@ -14,6 +15,4 @@ function sortLibraries(libraries, ndays, bookScores) {
     const indexB = (ndays - b.signupDuration) * bScores * b.shipCapacity;
     return indexB - indexA;
   });
-}
-
-export { sortLibraries };
+};

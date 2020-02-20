@@ -1,23 +1,20 @@
 const debug = require("debug")("solve");
 const _ = require("lodash");
 const gridUtils = require("./grid-utils");
+const sortLibraries = require("./sortLibraries");
 
 function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
+  libraries = sortLibraries(libraries, ndays, scores);
   let isCurrentlySigning = false;
   let currentlySigningIndex = null;
   const signedUpLibrariesIndexes = new Set();
   const signedUpLibraries = [];
   let nbSignedUpLeft = 0;
   for (let day = 0; day < ndays; day++) {
-    //debug("begin day");
-    //debug({ day });
-    //debug({ isCurrentlySigning, signedUpLibrariesIndexes });
     if (isCurrentlySigning) {
       nbSignedUpLeft--;
-      //debug({ nbSignedUpLeft });
       if (nbSignedUpLeft === 0) {
         isCurrentlySigning = false;
-        //debug("finished signing", libraryIndex);
         signedUpLibraries.push({
           libraryIndex: currentlySigningIndex,
           nbSentBooks: 0,
@@ -33,7 +30,6 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
         if (signedUpLibrariesIndexes.has(index)) {
           continue;
         }
-        //debug("Signing", index);
         isCurrentlySigning = true;
         signedUpLibrariesIndexes.add(index);
         currentlySigningIndex = index;
@@ -41,10 +37,8 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
         break;
       }
     }
-    //debug("send");
     for (signedUpLibrary of signedUpLibraries) {
       if (signedUpLibrary.availableBooks.length <= 0) continue;
-      //debug("sending books for library", signedUpLibrary.libraryIndex);
       const shippedBooks = signedUpLibrary.availableBooks.splice(
         0,
         signedUpLibrary.shipCapacity
@@ -52,9 +46,7 @@ function solve({ nbooks, nlibraries, ndays, scores, libraries }, file) {
       signedUpLibrary.books = signedUpLibrary.books.concat(shippedBooks);
       signedUpLibrary.nbSentBooks += shippedBooks.length;
     }
-    //debug("end day");
   }
-  //debug(signedUpLibraries);
   debug("finished");
   return signedUpLibraries;
 }
